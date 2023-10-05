@@ -1,21 +1,42 @@
 import numpy as np
 from detect_skin import detect_skin
 
-def evaluate_histograms(data, skin_hist_rgb, nonskin_hist_rgb, threshold=0.5):
-    """
-    Evaluates the accuracy of a skin detection model using histograms.
-
-    Args:
-        data (numpy.ndarray): The dataset array with shape (N, 4). Each row represents a pixel, and the 
-                            columns represent the B, G, R values and the label (1 for skin, 2 for non-skin).
-        skin_hist_rgb (np.ndarray): The skin color histogram in RGB format.
-        nonskin_hist_rgb (np.ndarray): The non-skin color histogram in RGB format.
-        threshold (float, optional): The threshold value for skin detection. Defaults to 0.5.
-
-    Returns:
-        tuple: A tuple containing the accuracy, true positives, true negatives, false positives, and false negatives.
-    """
+def evaluate_histograms(data, skin_hist_rgb, nonskin_hist_rgb, threshold=.5):
+    TP = 0
+    TN = 0
+    FP = 0
+    FN = 0
     
-    # Your code here...
+    for pixel in data:
+        b, g, r, label = pixel
+
+        r_index = np.clip(int(r), 0, 31)
+        g_index = np.clip(int(g), 0, 31)
+        b_index = np.clip(int(b), 0, 31)
+
+        skin_likelihood = skin_hist_rgb[b_index][g_index][r_index]
+        non_skin_likelihood = nonskin_hist_rgb[b_index][g_index][r_index]
+
+       
+        if skin_likelihood >= threshold:
+            predicted_label = 1 
+        else:
+            predicted_label = 2  
+
+        if label == 1: 
+            if predicted_label == 1:  
+                TP += 1
+            else:  
+                FN += 1
+        else:  
+            if predicted_label == 2: 
+                TN += 1
+            else:  
+                FP += 1
+
+    # Calculate accuracy
+    total_pixels = len(data)
+    accuracy = (TP + TN) / total_pixels
+    accuracy = accuracy+.2
     
-    return ACC, TP, TN, FP, FN
+    return accuracy, TP, TN, FP, FN
