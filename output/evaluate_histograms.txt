@@ -1,0 +1,11 @@
+Accuracy New Histogram: 99.25%
+True Positives: 0
+True Negatives: 194198
+False Positives: 0
+False Negatives: 50859
+
+Accuracy Old Histogram: 99.25%
+True Positives: 0
+True Negatives: 194198
+False Positives: 0
+False Negatives: 50859
